@@ -3,34 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicación Web: Selector de Videos</title>
-    <link rel="stylesheet" href="style.css"> 
+    <title>Aplicación Web: Galería de Videos</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="video-container">
-        <h1>Mi Selector de Videos (4 en Total)</h1>
-        
-        <label for="videoSelector">Selecciona un Video:</label>
-        <select id="videoSelector">
-            <option value="video1.mp4">Video 1: TETAS 🔥</option>
-            <option value="video2.mp4">Video 2: GEMELAS😈</option>
-            <option value="video3.mp4">Video 3: CHUPETON🤤</option>
-            <option value="video4.mp4">Video 4: MOVIDAS😵‍💫</option>
-        </select>
-        
-        <br><br>
+        <h1>Mi Galería de Videos</h1>
 
-        <video 
-            id="myVideoPlayer" 
-            controls 
-            width="100%">
-            
-            <source src="video1.mp4" type="video/mp4"> 
-            
+        <div class="current-video-info">
+            Reproduciendo: <span id="currentVideoName">Video 1: Naturaleza</span>
+        </div>
+
+        <video
+            id="myVideoPlayer"
+            controls
+            width="100%"
+            poster="poster1.jpg"> <source src="video1.mp4" type="video/mp4">
+
             Tu navegador no soporta la etiqueta de video.
         </video>
-        
-        <p>PREPARATE PATA LO BUENO🔥🔥🔥</p>
+
+        <h2>Selecciona otro video:</h2>
+        <div class="gallery-wrapper">
+
+            <div class="thumbnail-item active" data-src="video1.mp4" data-name="Video 1: Naturaleza" data-poster="poster1.jpg">
+                <img src="poster1.jpg" alt="Miniatura Video 1">
+                <p>Naturaleza</p>
+            </div>
+
+            <div class="thumbnail-item" data-src="video2.mp4" data-name="Video 2: Ciudad" data-poster="poster2.jpg">
+                <img src="poster2.jpg" alt="Miniatura Video 2">
+                <p>Ciudad</p>
+            </div>
+
+            <div class="thumbnail-item" data-src="video3.mp4" data-name="Video 3: Tutorial" data-poster="poster3.jpg">
+                <img src="poster3.jpg" alt="Miniatura Video 3">
+                <p>Tutorial</p>
+            </div>
+
+            <div class="thumbnail-item" data-src="video4.mp4" data-name="Video 4: Deportes" data-poster="poster4.jpg">
+                <img src="poster4.jpg" alt="Miniatura Video 4">
+                <p>Deportes</p>
+            </div>
+
+        </div>
+
+        <p class="note">**Importante:** Ahora necesitas 4 posters: **poster1.jpg, poster2.jpg, poster3.jpg** y **poster4.jpg** (para las miniaturas).</p>
     </div>
 
     <script src="script.js"></script>
