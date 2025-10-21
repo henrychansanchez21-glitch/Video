@@ -3,25 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicación Web de Video</title>
-    <link rel="stylesheet" href="styles.css"> </head>
+    <title>Aplicación Web: Selector de Videos</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
 <body>
     <div class="video-container">
-        <h1>Mi Reproductor de Video</h1>
+        <h1>Mi Selector de Videos (4 en Total)</h1>
         
+        <label for="videoSelector">Selecciona un Video:</label>
+        <select id="videoSelector">
+            <option value="video1.mp4">Video 1: Naturaleza</option>
+            <option value="video2.mp4">Video 2: Ciudad</option>
+            <option value="video3.mp4">Video 3: Tutorial</option>
+            <option value="video4.mp4">Video 4: Deportes</option>
+        </select>
+        
+        <br><br>
+
         <video 
             id="myVideoPlayer" 
             controls 
-            poster="poster-preview.jpg" 
             width="100%">
             
-            <source src="mi-video.mp4" type="video/mp4">
+            <source src="video1.mp4" type="video/mp4"> 
             
             Tu navegador no soporta la etiqueta de video.
         </video>
         
-        <p>Asegúrate de colocar tu archivo de video (`mi-video.mp4`) en la misma carpeta.</p>
+        <p>Asegúrate de renombrar tus 4 archivos de video a **video1.mp4, video2.mp4, video3.mp4** y **video4.mp4**, y colócalos en la misma carpeta.</p>
     </div>
 
-    </body>
+    <script src="script.js"></script>
+</body>
 </html>

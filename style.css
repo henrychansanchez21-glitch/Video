@@ -8,7 +8,7 @@ body {
 }
 
 .video-container {
-    max-width: 800px; /* Limita el ancho máximo del reproductor */
+    max-width: 800px; 
     width: 100%;
     background-color: white;
     padding: 20px;
@@ -22,11 +22,20 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* Estilo para el selector de video */
+#videoSelector {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1em;
+    margin-bottom: 15px;
+}
+
 /* Estilo para la etiqueta de video */
 #myVideoPlayer {
     display: block;
     border-radius: 4px;
-    background-color: black; /* Fondo negro mientras carga */
+    background-color: black;
+    margin-top: 10px;
 }
 
 p {
