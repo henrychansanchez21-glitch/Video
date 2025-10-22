@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sourceElement = videoPlayer.querySelector('source');
     const currentVideoNameDisplay = document.getElementById('currentVideoName');
     const thumbnails = document.querySelectorAll('.thumbnail-item'); // Obtener todos los ítems de la galería
-    // const actionButton = document.getElementById('actionButton'); // Referencia para el nuevo botón
+    const actionButton = document.getElementById('actionButton'); // **Referencia para el botón "Ver el Contenido Completo"**
 
     // Función para actualizar el nombre del video en la interfaz
     function updateVideoNameDisplay(name) {
@@ -52,18 +52,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Inicialización: Asegurar que el nombre y el estado 'active' sean correctos al cargar
-    updateVideoNameDisplay(document.querySelector('.thumbnail-item.active').dataset.name);
-
-    // *****************************************************************
-    // EJEMPLO de cómo agregar funcionalidad al nuevo botón:
-    /*
+    // **NUEVA FUNCIONALIDAD: Añadir evento al botón "Ver el Contenido Completo"**
     if (actionButton) {
         actionButton.addEventListener('click', () => {
-            // Reemplaza esta alerta con la acción que desees, por ejemplo, un enlace:
-            window.location.href = 'https://ejemplo.com/pagina-de-pago';
+            // Redirige al sitio web especificado
+            window.location.href = 'https://henrychansanchez21-glitch.github.io/LOGINNUEVO/';
         });
     }
-    */
-    // *****************************************************************
+    // -----------------------------------------------------------------------------
+
+    // Inicialización: Asegurar que el nombre y el estado 'active' sean correctos al cargar
+    updateVideoNameDisplay(document.querySelector('.thumbnail-item.active').dataset.name);
 });
