@@ -102,6 +102,36 @@ h2 {
     color: #333;
 }
 
+/* --- ESTILOS DEL BOTÓN ADICIONAL --- */
+.button-wrapper {
+    margin-top: 30px; /* Espacio arriba de la galería */
+    text-align: center;
+}
+
+#actionButton {
+    background-color: #007bff; /* Azul primario */
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+#actionButton:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+    transform: translateY(-1px); /* Efecto ligero de elevación */
+}
+
+#actionButton:active {
+    background-color: #003d80;
+    transform: translateY(1px); /* Efecto de "presionado" */
+}
+/* ------------------------------------- */
+
+
 .note {
     margin-top: 25px;
     font-size: 0.9em;

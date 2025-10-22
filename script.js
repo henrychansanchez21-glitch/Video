@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sourceElement = videoPlayer.querySelector('source');
     const currentVideoNameDisplay = document.getElementById('currentVideoName');
     const thumbnails = document.querySelectorAll('.thumbnail-item'); // Obtener todos los ítems de la galería
+    // const actionButton = document.getElementById('actionButton'); // Referencia para el nuevo botón
 
     // Función para actualizar el nombre del video en la interfaz
     function updateVideoNameDisplay(name) {
@@ -52,8 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Inicialización: Asegurar que el nombre y el estado 'active' sean correctos al cargar
-    // El HTML ya establece el primer video como activo por defecto.
-    // Solo necesitamos asegurarnos de que el nombre sea el inicial:
-    // La función 'updateVideoNameDisplay' ya fue llamada en el HTML inicial, pero la repito aquí por claridad:
     updateVideoNameDisplay(document.querySelector('.thumbnail-item.active').dataset.name);
+
+    // *****************************************************************
+    // EJEMPLO de cómo agregar funcionalidad al nuevo botón:
+    /*
+    if (actionButton) {
+        actionButton.addEventListener('click', () => {
+            // Reemplaza esta alerta con la acción que desees, por ejemplo, un enlace:
+            window.location.href = 'https://ejemplo.com/pagina-de-pago';
+        });
+    }
+    */
+    // *****************************************************************
 });
