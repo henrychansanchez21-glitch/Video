@@ -20,7 +20,8 @@
             justify-content: center;
             align-items: center;
             color: white;
-            overflow: hidden;
+            overflow: auto; /* Cambiado de hidden a auto para permitir scroll */
+            padding: 20px;
         }
 
         /* Modal de verificación */
@@ -132,6 +133,8 @@
             text-align: center;
             transition: all 0.3s ease-in-out;
             margin: 20px;
+            position: relative; /* Asegura que esté por encima del overlay cuando se muestre */
+            z-index: 1;
         }
 
         /* Estilos para la galería de videos */
@@ -169,18 +172,21 @@
             margin-top: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease;
+            max-width: 100%;
         }
 
         /* --- ESTILOS DE LA GALERÍA --- */
         .gallery-wrapper {
             display: flex;
-            justify-content: space-between; /* Distribuye las miniaturas uniformemente */
+            justify-content: space-between;
             gap: 15px;
             padding: 10px 0;
+            flex-wrap: wrap; /* Permite que las miniaturas se ajusten en pantallas pequeñas */
         }
 
         .thumbnail-item {
-            flex: 1; /* Permite que cada ítem tome el mismo ancho */
+            flex: 1;
+            min-width: 150px; /* Ancho mínimo para mantener la legibilidad */
             cursor: pointer;
             border: 3px solid transparent;
             border-radius: 6px;
@@ -191,13 +197,13 @@
         }
 
         .thumbnail-item:hover {
-            border-color: #007bff; /* Borde al pasar el mouse */
+            border-color: #007bff;
             transform: translateY(-3px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .thumbnail-item.active {
-            border-color: #e04e1f; /* Borde para el video actualmente seleccionado */
+            border-color: #e04e1f;
             box-shadow: 0 0 12px rgba(224, 78, 31, 0.5);
         }
 
@@ -207,6 +213,7 @@
             display: block;
             border-radius: 4px;
             object-fit: cover;
+            max-height: 120px; /* Limita la altura para consistencia */
         }
 
         .thumbnail-item p {
@@ -218,12 +225,12 @@
 
         /* --- ESTILOS DEL BOTÓN ADICIONAL --- */
         .button-wrapper {
-            margin-top: 30px; /* Espacio arriba de la galería */
+            margin-top: 30px;
             text-align: center;
         }
 
         #actionButton {
-            background-color: #007bff; /* Azul primario */
+            background-color: #007bff;
             color: white;
             border: none;
             padding: 12px 25px;
@@ -235,13 +242,13 @@
         }
 
         #actionButton:hover {
-            background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
-            transform: translateY(-1px); /* Efecto ligero de elevación */
+            background-color: #0056b3;
+            transform: translateY(-1px);
         }
 
         #actionButton:active {
             background-color: #003d80;
-            transform: translateY(1px); /* Efecto de "presionado" */
+            transform: translateY(1px);
         }
 
         .note {
@@ -263,6 +270,28 @@
             padding: 10px;
             border-radius: 5px;
             border-left: 4px solid #4caf50;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .gallery-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .thumbnail-item {
+                width: 80%;
+                margin-bottom: 15px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            #mainContent {
+                margin: 10px;
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -389,6 +418,9 @@
                 displayName.textContent = nombre;
                 overlay.style.display = 'none';
                 mainContent.style.display = 'block';
+                
+                // Asegurar que el contenido sea accesible
+                document.body.style.overflow = 'auto';
             });
 
             // Función para actualizar el nombre del video en la interfaz
@@ -447,6 +479,13 @@
 
             // Inicialización: Asegurar que el nombre y el estado 'active' sean correctos al cargar
             updateVideoNameDisplay(document.querySelector('.thumbnail-item.active').dataset.name);
+            
+            // Permitir que el usuario presione Enter para verificar
+            userAgeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyBtn.click();
+                }
+            });
         });
     </script>
 </body>
