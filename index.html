@@ -68,15 +68,29 @@
   </div>
 
   <script>
-    // Establecer el tiempo de finalización: ahora + 6 horas
-    const endTime = new Date(Date.now() + 6 * 60 * 60 * 1000);
+    const MAINTENANCE_KEY = 'maintenance_end_time';
+    const DURATION_HOURS = 6;
+
+    // Intentar obtener la hora de finalización guardada
+    let endTime = localStorage.getItem(MAINTENANCE_KEY);
+
+    if (!endTime) {
+      // Si no existe, establecerla ahora + 6 horas y guardarla
+      endTime = new Date(Date.now() + DURATION_HOURS * 60 * 60 * 1000).getTime();
+      localStorage.setItem(MAINTENANCE_KEY, endTime);
+    } else {
+      // Asegurarse de que sea un número (localStorage guarda strings)
+      endTime = parseInt(endTime, 10);
+    }
 
     function updateCountdown() {
-      const now = new Date();
+      const now = Date.now();
       const diff = endTime - now;
 
       if (diff <= 0) {
-        document.getElementById('countdown').innerHTML = '<p>¡Ya estamos de vuelta!</p>';
+        document.getElementById('countdown').innerHTML = '<p style="font-size:1.3rem;color:#27ae60;">¡Ya estamos de vuelta!</p>';
+        // Opcional: limpiar el localStorage
+        localStorage.removeItem(MAINTENANCE_KEY);
         return;
       }
 
@@ -89,9 +103,8 @@
       document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
     }
 
-    // Actualizar cada segundo
     setInterval(updateCountdown, 1000);
-    updateCountdown(); // Ejecutar inmediatamente al cargar
+    updateCountdown(); // Ejecutar al cargar
   </script>
 </body>
 </html>
