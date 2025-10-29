@@ -69,42 +69,47 @@
 
   <script>
     const MAINTENANCE_KEY = 'maintenance_end_time';
-    const DURATION_HOURS = 6;
+    const DURATION_MS = 6 * 60 * 60 * 1000; // 6 horas en milisegundos
 
-    // Intentar obtener la hora de finalización guardada
+    // Obtener tiempo guardado o crear uno nuevo
     let endTime = localStorage.getItem(MAINTENANCE_KEY);
 
-    if (!endTime) {
-      // Si no existe, establecerla ahora + 6 horas y guardarla
-      endTime = new Date(Date.now() + DURATION_HOURS * 60 * 60 * 1000).getTime();
-      localStorage.setItem(MAINTENANCE_KEY, endTime);
+    if (!endTime || isNaN(endTime)) {
+      // Establecer nueva hora de finalización
+      endTime = Date.now() + DURATION_MS;
+      localStorage.setItem(MAINTENANCE_KEY, endTime.toString());
     } else {
-      // Asegurarse de que sea un número (localStorage guarda strings)
       endTime = parseInt(endTime, 10);
     }
 
     function updateCountdown() {
       const now = Date.now();
-      const diff = endTime - now;
+      let diff = endTime - now;
 
       if (diff <= 0) {
         document.getElementById('countdown').innerHTML = '<p style="font-size:1.3rem;color:#27ae60;">¡Ya estamos de vuelta!</p>';
-        // Opcional: limpiar el localStorage
         localStorage.removeItem(MAINTENANCE_KEY);
         return;
       }
 
+      // Calcular horas, minutos y segundos
       const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      diff -= hours * (1000 * 60 * 60);
 
+      const minutes = Math.floor(diff / (1000 * 60));
+      diff -= minutes * (1000 * 60);
+
+      const seconds = Math.floor(diff / 1000);
+
+      // Actualizar el DOM
       document.getElementById('hours').textContent = String(hours).padStart(2, '0');
       document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
       document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
     }
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown(); // Ejecutar al cargar
+    // Iniciar inmediatamente y luego cada segundo
+    updateCountdown();
+    const countdownInterval = setInterval(updateCountdown, 1000);
   </script>
 </body>
 </html>
