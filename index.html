@@ -1,626 +1,97 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicación Web: Galería de Videos</title>
-    <style>
-        /* Estilos para el modal de verificación de edad */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            overflow-x: hidden;
-        }
-
-        /* Modal de verificación */
-        #ageModal {
-            background: rgba(255, 255, 255, 0.95);
-            color: #333;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            animation: fadeIn 0.6s ease-out, popIn 0.4s ease-out;
-            z-index: 1000;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.8); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        #ageModal.shake {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        #ageModal h2 {
-            margin-bottom: 20px;
-            color: #6a11cb;
-            font-size: 24px;
-        }
-
-        .input-group {
-            margin: 15px 0;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            color: #555;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .input-group input:focus {
-            border-color: #6a11cb;
-            outline: none;
-        }
-
-        #verifyBtn {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 18px;
-            border-radius: 12px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.2s, opacity 0.2s;
-        }
-
-        #verifyBtn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        /* Overlay oscuro para el modal */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-        }
-
-        /* Contenido principal (oculto al inicio) */
-        #mainContent {
-            display: none;
-            max-width: 900px;
-            width: 100%;
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            text-align: center;
-            transition: all 0.3s ease-in-out;
-            margin: 20px;
-        }
-
-        /* Estilos para la galería de videos */
-        h1 {
-            color: #0056b3;
-            margin-bottom: 25px;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 10px;
-        }
-
-        h2 {
-            color: #333;
-            margin-top: 30px;
-            margin-bottom: 15px;
-        }
-
-        /* Dynamic current video info */
-        .current-video-info {
-            margin-bottom: 15px;
-            font-size: 1.2em;
-            color: #555;
-            font-weight: 500;
-        }
-
-        #currentVideoName {
-            font-weight: bold;
-            color: #e04e1f; /* Orange-Red highlight */
-        }
-
-        /* Style for the video tag */
-        #myVideoPlayer {
-            display: block;
-            border-radius: 8px;
-            background-color: #111;
-            margin-top: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
-        }
-
-        /* --- ESTILOS MEJORADOS DE LA GALERÍA --- */
-        .gallery-wrapper {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            padding: 10px 0;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            scrollbar-width: thin;
-            scrollbar-color: #6a11cb #f0f0f0;
-        }
-
-        /* Estilos para la barra de desplazamiento en navegadores WebKit */
-        .gallery-wrapper::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .gallery-wrapper::-webkit-scrollbar-track {
-            background: #f0f0f0;
-            border-radius: 10px;
-        }
-
-        .gallery-wrapper::-webkit-scrollbar-thumb {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            border-radius: 10px;
-        }
-
-        .thumbnail-item {
-            flex: 0 0 auto;
-            width: 200px;
-            cursor: pointer;
-            border: 3px solid transparent;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            padding: 8px;
-            background: linear-gradient(145deg, #f9f9f9, #e6e6e6);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-
-        .thumbnail-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 1;
-            border-radius: 8px;
-        }
-
-        .thumbnail-item:hover {
-            border-color: #007bff;
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .thumbnail-item:hover::before {
-            opacity: 1;
-        }
-
-        .thumbnail-item.active {
-            border-color: #e04e1f;
-            box-shadow: 0 0 20px rgba(224, 78, 31, 0.6);
-            transform: translateY(-5px);
-        }
-
-        .thumbnail-item.active::after {
-            content: '▶';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(224, 78, 31, 0.9);
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            z-index: 2;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .thumbnail-item img {
-            width: 100%;
-            height: 120px;
-            display: block;
-            border-radius: 8px;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .thumbnail-item:hover img {
-            transform: scale(1.05);
-        }
-
-        .thumbnail-item p {
-            margin: 8px 0 0;
-            font-size: 0.9em;
-            font-weight: 600;
-            color: #333;
-            transition: color 0.3s ease;
-        }
-
-        .thumbnail-item:hover p {
-            color: #6a11cb;
-        }
-
-        /* --- ESTILOS DEL BOTÓN ADICIONAL --- */
-        .button-wrapper {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        #actionButton {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        #actionButton::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        #actionButton:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.5);
-        }
-
-        #actionButton:hover::before {
-            left: 100%;
-        }
-
-        #actionButton:active {
-            transform: translateY(1px);
-            box-shadow: 0 3px 10px rgba(0, 123, 255, 0.4);
-        }
-
-        .note {
-            margin-top: 25px;
-            font-size: 0.9em;
-            color: #777;
-            padding: 10px;
-            background-color: #f7f7f7;
-            border-radius: 4px;
-            border-left: 3px solid #e04e1f;
-        }
-
-        /* Mensaje de bienvenida personalizado */
-        .welcome-message {
-            margin-bottom: 20px;
-            font-size: 1.2em;
-            color: #333;
-            background-color: #e8f5e9;
-            padding: 10px;
-            border-radius: 5px;
-            border-left: 4px solid #4caf50;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Indicador de carga para videos */
-        .video-loading {
-            position: relative;
-        }
-
-        .video-loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 40px;
-            height: 40px;
-            margin: -20px 0 0 -20px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #6a11cb;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            z-index: 10;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Media queries para responsividad */
-        @media (max-width: 768px) {
-            .gallery-wrapper {
-                gap: 10px;
-                padding-bottom: 15px;
-            }
-            
-            .thumbnail-item {
-                width: 160px;
-            }
-            
-            .thumbnail-item img {
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .gallery-wrapper {
-                gap: 8px;
-            }
-            
-            .thumbnail-item {
-                width: 140px;
-            }
-            
-            .thumbnail-item img {
-                height: 90px;
-            }
-            
-            #mainContent {
-                padding: 20px 15px;
-                margin: 10px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mantenimiento - Aplicación</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #333;
+    }
+    .container {
+      text-align: center;
+      background: white;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-width: 90%;
+      width: 400px;
+    }
+    h1 {
+      color: #e74c3c;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .timer {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 1.5rem;
+    }
+    .time-box {
+      background: #ecf0f1;
+      padding: 1rem;
+      border-radius: 8px;
+      min-width: 70px;
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #2c3e50;
+    }
+    .label {
+      font-size: 0.8rem;
+      color: #7f8c8d;
+      display: block;
+      margin-top: 0.3rem;
+    }
+  </style>
 </head>
 <body>
-    <!-- Modal de verificación de edad -->
-    <div id="overlay">
-        <div id="ageModal">
-            <h2>🔞 ¿Eres mayor de 18 años?</h2>
-            <div class="input-group">
-                <label for="userName">Tu nombre:</label>
-                <input type="text" id="userName" placeholder="Ej. Ana López" autocomplete="off">
-            </div>
-            <div class="input-group">
-                <label for="userAge">Tu edad:</label>
-                <input type="number" id="userAge" min="1" max="120" placeholder="Ej. 25">
-            </div>
-            <button id="verifyBtn">Verificar y entrar</button>
-        </div>
+  <div class="container">
+    <h1>🚧 Mantenimiento Programado</h1>
+    <p>Lo sentimos, nuestra aplicación se encuentra temporalmente en mantenimiento.</p>
+    <p>Estimamos que estaremos de vuelta en:</p>
+
+    <div class="timer" id="countdown">
+      <div class="time-box"><span id="hours">00</span><span class="label">Horas</span></div>
+      <div class="time-box"><span id="minutes">00</span><span class="label">Minutos</span></div>
+      <div class="time-box"><span id="seconds">00</span><span class="label">Segundos</span></div>
     </div>
+  </div>
 
-    <!-- Contenido principal (solo visible tras verificación) -->
-    <div id="mainContent">
-        <div class="welcome-message">
-            ¡Bienvenido/a, <span id="displayName">amigo/a</span>!
-        </div>
-        
-        <div class="video-container">
-            <h1>Pruevas Gratis</h1>
+  <script>
+    // Establecer el tiempo de finalización: ahora + 6 horas
+    const endTime = new Date(Date.now() + 6 * 60 * 60 * 1000);
 
-            <div class="current-video-info">
-                Reproduciendo: <span id="currentVideoName">Video 1: Pechugas</span>
-            </div>
+    function updateCountdown() {
+      const now = new Date();
+      const diff = endTime - now;
 
-            <video
-                id="myVideoPlayer"
-                controls
-                width="100%"
-                poster="poster1.jpg">
-                <source src="video1.mp4" type="video/mp4">
-                Tu navegador no soporta la etiqueta de video.
-            </video>
+      if (diff <= 0) {
+        document.getElementById('countdown').innerHTML = '<p>¡Ya estamos de vuelta!</p>';
+        return;
+      }
 
-            <h2>Selecciona otro video:</h2>
-            <div class="gallery-wrapper">
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                <div class="thumbnail-item active" data-src="video1.mp4" data-name="Video 1: Pechugas" data-poster="poster1.jpg">
-                    <img src="poster1.jpg" alt="Gratis">
-                    <p>Pechugas</p>
-                </div>
+      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
 
-                <div class="thumbnail-item" data-src="video2.mp4" data-name="Video 2: Gemelas" data-poster="poster2.jpg">
-                    <img src="poster2.jpg" alt="Gratis">
-                    <p>Gemelas</p>
-                </div>
-
-                <div class="thumbnail-item" data-src="video3.mp4" data-name="Video 3: Chupete" data-poster="poster3.jpg">
-                    <img src="poster3.jpg" alt="Gratis">
-                    <p>Chupete</p>
-                </div>
-
-                <div class="thumbnail-item" data-src="video4.mp4" data-name="Video 4: Movidas" data-poster="poster4.jpg">
-                    <img src="poster4.jpg" alt="Gratis">
-                    <p>Movidas</p>
-                </div>
-
-            </div>
-            
-            <div class="button-wrapper">
-                <button id="actionButton">Ver el Contenido Completo (Pago)</button>
-            </div>
-
-            <p class="note">Producto de paga para ti gratis</p>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Elementos del modal de verificación
-            const overlay = document.getElementById('overlay');
-            const modal = document.getElementById('ageModal');
-            const verifyBtn = document.getElementById('verifyBtn');
-            const userNameInput = document.getElementById('userName');
-            const userAgeInput = document.getElementById('userAge');
-            const displayName = document.getElementById('displayName');
-            const mainContent = document.getElementById('mainContent');
-
-            // Elementos de la galería de videos
-            const videoPlayer = document.getElementById('myVideoPlayer');
-            const sourceElement = videoPlayer.querySelector('source');
-            const currentVideoNameDisplay = document.getElementById('currentVideoName');
-            const thumbnails = document.querySelectorAll('.thumbnail-item');
-            const actionButton = document.getElementById('actionButton');
-
-            // Función para verificar la edad
-            verifyBtn.addEventListener('click', () => {
-                const nombre = userNameInput.value.trim();
-                const edad = parseInt(userAgeInput.value);
-
-                // Validaciones
-                if (!nombre) {
-                    alert("Por favor, ingresa tu nombre.");
-                    return;
-                }
-                if (isNaN(edad) || edad < 1 || edad > 120) {
-                    modal.classList.add('shake');
-                    setTimeout(() => modal.classList.remove('shake'), 500);
-                    alert("Por favor, ingresa una edad válida (1-120).");
-                    return;
-                }
-
-                // Menor de edad
-                if (edad < 18) {
-                    modal.innerHTML = `
-                        <h2 style="color:#e74c3c;">🚫 Acceso denegado</h2>
-                        <p style="margin-top:20px;">Lo sentimos, este sitio es solo para mayores de 18 años.</p>
-                    `;
-                    setTimeout(() => {
-                        window.location.href = "https://www.google.com";
-                    }, 2500);
-                    return;
-                }
-
-                // Mayor de edad: mostrar contenido
-                displayName.textContent = nombre;
-                overlay.style.display = 'none';
-                mainContent.style.display = 'block';
-            });
-
-            // Función para actualizar el nombre del video en la interfaz
-            function updateVideoNameDisplay(name) {
-                currentVideoNameDisplay.textContent = name;
-            }
-
-            // Función principal para cargar un nuevo video
-            function loadNewVideo(src, name, poster) {
-                // Mostrar indicador de carga
-                videoPlayer.classList.add('video-loading');
-                
-                // Pausar el video actual
-                videoPlayer.pause();
-
-                // Actualizar la fuente del video y el póster
-                sourceElement.src = src;
-                videoPlayer.poster = poster;
-                
-                // Cargar el reproductor
-                videoPlayer.load();
-
-                // Actualizar el nombre en la interfaz
-                updateVideoNameDisplay(name);
-
-                // Quitar el indicador de carga cuando el video esté listo
-                videoPlayer.addEventListener('canplay', function onCanPlay() {
-                    videoPlayer.classList.remove('video-loading');
-                    videoPlayer.removeEventListener('canplay', onCanPlay);
-                });
-
-                // Opcional: Iniciar la reproducción automáticamente (puede ser bloqueado por el navegador)
-                // videoPlayer.play().catch(error => {
-                //     console.warn("Auto-play bloqueado.", error);
-                // });
-            }
-
-            // Agregar un "escuchador de eventos" a cada miniatura
-            thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener('click', () => {
-                    // Obtener datos del video del atributo 'data-'
-                    const selectedVideoSrc = thumbnail.dataset.src;
-                    const selectedVideoName = thumbnail.dataset.name;
-                    const selectedVideoPoster = thumbnail.dataset.poster;
-
-                    // Cargar el video
-                    loadNewVideo(selectedVideoSrc, selectedVideoName, selectedVideoPoster);
-
-                    // Manejar el estado 'active' para indicar la selección
-                    // Remover la clase 'active' de todos
-                    thumbnails.forEach(t => t.classList.remove('active'));
-
-                    // Agregar la clase 'active' al ítem clickeado
-                    thumbnail.classList.add('active');
-                });
-            });
-            
-            // Añadir evento al botón "Ver el Contenido Completo"
-            if (actionButton) {
-                actionButton.addEventListener('click', () => {
-                    // Redirige al sitio web especificado
-                    window.location.href = 'https://henrychansanchez21-glitch.github.io/LOGINNUEVO/';
-                });
-            }
-
-            // Inicialización: Asegurar que el nombre y el estado 'active' sean correctos al cargar
-            updateVideoNameDisplay(document.querySelector('.thumbnail-item.active').dataset.name);
-        });
-    </script>
+    // Actualizar cada segundo
+    setInterval(updateCountdown, 1000);
+    updateCountdown(); // Ejecutar inmediatamente al cargar
+  </script>
 </body>
 </html>
