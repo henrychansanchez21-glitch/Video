@@ -3,110 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mantenimiento - Aplicación</title>
+  <title>Fuera de Servicio</title>
   <style>
     body {
+      margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f5f5;
+      background: #f8f9fa;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      color: #333;
+      min-height: 100vh;
+      color: #495057;
     }
-    .container {
+    .alert-box {
       text-align: center;
       background: white;
       padding: 2.5rem;
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
       max-width: 90%;
-      width: 400px;
+      width: 450px;
+    }
+    .icon {
+      font-size: 3.5rem;
+      color: #e74c3c;
+      margin-bottom: 1.2rem;
     }
     h1 {
-      color: #e74c3c;
+      font-size: 1.8rem;
       margin-bottom: 1rem;
+      color: #e74c3c;
     }
     p {
       font-size: 1.1rem;
-      margin-bottom: 2rem;
-    }
-    .timer {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 1.5rem;
-    }
-    .time-box {
-      background: #ecf0f1;
-      padding: 1rem;
-      border-radius: 8px;
-      min-width: 70px;
-      font-weight: bold;
-      font-size: 1.3rem;
-      color: #2c3e50;
-    }
-    .label {
-      font-size: 0.8rem;
-      color: #7f8c8d;
-      display: block;
-      margin-top: 0.3rem;
+      line-height: 1.6;
+      color: #6c757d;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🚧 Mantenimiento Programado</h1>
-    <p>Lo sentimos, nuestra aplicación se encuentra temporalmente en mantenimiento.</p>
-    <p>Estimamos que estaremos de vuelta en:</p>
-
-    <div class="timer" id="countdown">
-      <div class="time-box"><span id="hours">00</span><span class="label">Horas</span></div>
-      <div class="time-box"><span id="minutes">00</span><span class="label">Minutos</span></div>
-      <div class="time-box"><span id="seconds">00</span><span class="label">Segundos</span></div>
-    </div>
+  <div class="alert-box">
+    <div class="icon">⚠️</div>
+    <h1>Aplicación Fuera de Servicio</h1>
+    <p>Lo sentimos, nuestro servicio no está disponible en este momento. Estamos trabajando para resolver el problema lo antes posible.</p>
   </div>
-
-  <script>
-    const MAINTENANCE_KEY = 'maintenance_end_time';
-    const DURATION_MS = 6 * 60 * 60 * 1000; // 6 horas en milisegundos
-
-    // Obtener tiempo guardado o crear uno nuevo
-    let endTime = localStorage.getItem(MAINTENANCE_KEY);
-
-    if (!endTime || isNaN(endTime)) {
-      // Establecer nueva hora de finalización
-      endTime = Date.now() + DURATION_MS;
-      localStorage.setItem(MAINTENANCE_KEY, endTime.toString());
-    } else {
-      endTime = parseInt(endTime, 10);
-    }
-
-    function updateCountdown() {
-      const now = Date.now();
-      let diff = endTime - now;
-
-      if (diff <= 0) {
-        document.getElementById('countdown').innerHTML = '<p style="font-size:1.3rem;color:#27ae60;">¡Ya estamos de vuelta!</p>';
-        localStorage.removeItem(MAINTENANCE_KEY);
-        return;
-      }
-
-      // Calcular horas, minutos y segundos
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      diff -= hours * (1000 * 60 * 60);
-
-      const minutes = Math.floor(diff / (1000 * 60));
-      diff -= minutes * (1000 * 60);
-
-      const seconds = Math.floor(diff / 1000);
-
-      // Actualizar el DOM
-      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-    }
-
+</body>
+</html>
     // Iniciar inmediatamente y luego cada segundo
     updateCountdown();
     const countdownInterval = setInterval(updateCountdown, 1000);
