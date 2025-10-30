@@ -3,56 +3,112 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fuera de Servicio</title>
+  <title>Actualización en Progreso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f8f9fa;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+      background-size: 400% 400%;
+      animation: gradientBG 12s ease infinite;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      color: #495057;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
     }
-    .alert-box {
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .alerta-container {
+      position: relative;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 40px 30px;
       text-align: center;
-      background: white;
-      padding: 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-      max-width: 90%;
-      width: 450px;
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      overflow: hidden;
     }
-    .icon {
-      font-size: 3.5rem;
-      color: #e74c3c;
-      margin-bottom: 1.2rem;
+
+    .alerta-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      z-index: -1;
+      animation: rotate 20s linear infinite;
     }
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      color: #e74c3c;
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
-    p {
-      font-size: 1.1rem;
+
+    .icono-actualizacion {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 24px;
+      animation: spin 3s linear infinite;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .alerta-container h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 16px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .alerta-container p {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.9);
       line-height: 1.6;
-      color: #6c757d;
+    }
+
+    /* Efecto de brillo suave en el contenedor */
+    .alerta-container:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
     }
   </style>
 </head>
 <body>
-  <div class="alert-box">
-    <div class="icon">⚠️</div>
-    <h1>Aplicación Fuera de Servicio</h1>
-    <p>Lo sentimos, nuestro servicio no está disponible en este momento. Estamos trabajando para resolver el problema lo antes posible.</p>
+
+  <div class="alerta-container">
+    <!-- Icono de actualización (SVG integrado para mejor rendimiento y estilo) -->
+    <svg class="icono-actualizacion" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 12C3 7.02944 7.02944 3 12 3C15.5237 3 18.5303 5.03679 20.1213 7.99989M21 12C21 16.9706 16.9706 21 12 21C8.47635 21 5.4697 18.9632 3.87868 16.0001M12 8V12L15 13.5" 
+            stroke="white" 
+            stroke-width="2" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"/>
+    </svg>
+
+    <h2>¡Estamos en Mantenimiento!</h2>
+    <p>Estamos aplicando mejoras para darte una experiencia aún más rápida y segura. Vuelve en unos minutos.</p>
   </div>
-</body>
-</html>
-    // Iniciar inmediatamente y luego cada segundo
-    updateCountdown();
-    const countdownInterval = setInterval(updateCountdown, 1000);
-  </script>
+
 </body>
 </html>
