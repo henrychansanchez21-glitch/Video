@@ -1,102 +1,834 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nueva Versión Disponible</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación Web: Galería de Videos Premium</title>
+    <style>
+        /* Estilos para el modal de verificación de edad */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    body {
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-    }
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow-x: hidden;
+        }
 
-    .alert-container {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 40px;
-      text-align: center;
-      max-width: 400px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
+        /* Modal de verificación */
+        #ageModal {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: fadeIn 0.6s ease-out, popIn 0.4s ease-out;
+            z-index: 1000;
+        }
 
-    .alert-container h2 {
-      font-size: 28px;
-      margin-bottom: 20px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
-    .alert-container p {
-      font-size: 16px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      opacity: 0.9;
-    }
+        @keyframes popIn {
+            0% { transform: scale(0.8); }
+            100% { transform: scale(1); }
+        }
 
-    .download-btn {
-      background: linear-gradient(to right, #00c9ff, #92fe9d);
-      color: #000;
-      font-weight: bold;
-      border: none;
-      padding: 15px 35px;
-      font-size: 18px;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 6px 20px rgba(0, 201, 255, 0.5);
-      position: relative;
-      overflow: hidden;
-      text-decoration: none;
-      display: inline-block;
-    }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
 
-    .download-btn:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0, 201, 255, 0.7);
-    }
+        #ageModal.shake {
+            animation: shake 0.5s ease-in-out;
+        }
 
-    .download-btn:active {
-      transform: translateY(0);
-    }
+        #ageModal h2 {
+            margin-bottom: 20px;
+            color: #6a11cb;
+            font-size: 24px;
+        }
 
-    .download-btn::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -60%;
-      width: 20px;
-      height: 200%;
-      background: rgba(255, 255, 255, 0.5);
-      transform: rotate(25deg);
-      transition: all 0.6s;
-    }
+        .input-group {
+            margin: 15px 0;
+            text-align: left;
+        }
 
-    .download-btn:hover::after {
-      left: 120%;
-    }
-  </style>
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #6a11cb;
+            outline: none;
+        }
+
+        #verifyBtn {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        #verifyBtn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Overlay oscuro para el modal */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        /* Contenido principal (oculto al inicio) */
+        #mainContent {
+            display: none;
+            max-width: 900px;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+            margin: 20px;
+        }
+
+        /* Estilos para la galería de videos */
+        h1 {
+            color: #0056b3;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            font-size: 2.2em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        /* Dynamic current video info */
+        .current-video-info {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #555;
+            font-weight: 500;
+            background: linear-gradient(90deg, #f0f0f0, #e6e6e6);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .current-video-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        #currentVideoName {
+            font-weight: bold;
+            color: #e04e1f; /* Orange-Red highlight */
+            text-shadow: 1px 1px 2px rgba(224, 78, 31, 0.2);
+        }
+
+        /* Style for the video tag */
+        #myVideoPlayer {
+            display: block;
+            border-radius: 12px;
+            background-color: #111;
+            margin-top: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #myVideoPlayer:hover {
+            transform: scale(1.01);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* --- ESTILOS MEJORADOS DE LA GALERÍA --- */
+        .gallery-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .gallery-wrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 10px 0;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #6a11cb #f0f0f0;
+        }
+
+        /* Estilos para la barra de desplazamiento en navegadores WebKit */
+        .gallery-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .gallery-wrapper::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .gallery-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            border-radius: 10px;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(106, 17, 203, 0.8);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-nav:hover {
+            background: rgba(106, 17, 203, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .gallery-nav.prev {
+            left: -20px;
+        }
+
+        .gallery-nav.next {
+            right: -20px;
+        }
+
+        .thumbnail-item {
+            flex: 0 0 auto;
+            width: 200px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 8px;
+            background: linear-gradient(145deg, #f9f9f9, #e6e6e6);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .thumbnail-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, rgba(106, 17, 203, 0.1), rgba(37, 117, 252, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+            border-radius: 8px;
+        }
+
+        .thumbnail-item:hover {
+            border-color: #007bff;
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .thumbnail-item:hover::before {
+            opacity: 1;
+        }
+
+        .thumbnail-item.active {
+            border-color: #e04e1f;
+            box-shadow: 0 0 20px rgba(224, 78, 31, 0.6);
+            transform: translateY(-5px);
+        }
+
+        .thumbnail-item.active::after {
+            content: '▶';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(224, 78, 31, 0.9);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            z-index: 2;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .thumbnail-item img {
+            width: 100%;
+            height: 120px;
+            display: block;
+            border-radius: 8px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .thumbnail-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .thumbnail-item p {
+            margin: 8px 0 0;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .thumbnail-item:hover p {
+            color: #6a11cb;
+        }
+
+        /* --- ESTILOS DEL BOTÓN ADICIONAL --- */
+        .button-wrapper {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        #actionButton {
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #actionButton::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        #actionButton:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.5);
+        }
+
+        #actionButton:hover::before {
+            left: 100%;
+        }
+
+        #actionButton:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 10px rgba(0, 123, 255, 0.4);
+        }
+
+        .note {
+            margin-top: 25px;
+            font-size: 0.9em;
+            color: #777;
+            padding: 10px;
+            background-color: #f7f7f7;
+            border-radius: 4px;
+            border-left: 3px solid #e04e1f;
+        }
+
+        /* Mensaje de bienvenida personalizado */
+        .welcome-message {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: #333;
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #4caf50;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Indicador de carga para videos */
+        .video-loading {
+            position: relative;
+        }
+
+        .video-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6a11cb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Nuevos estilos para mejoras visuales */
+        .video-container {
+            position: relative;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 12px;
+            pointer-events: none;
+        }
+
+        .video-container:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .play-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #6a11cb;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .video-container:hover .play-icon {
+            transform: scale(1);
+        }
+
+        .thumbnail-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: linear-gradient(45deg, #ff8a00, #e52e71);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: bold;
+            z-index: 3;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-item i {
+            margin-right: 5px;
+        }
+
+        /* Media queries para responsividad */
+        @media (max-width: 768px) {
+            .gallery-wrapper {
+                gap: 10px;
+                padding-bottom: 15px;
+            }
+            
+            .thumbnail-item {
+                width: 160px;
+            }
+            
+            .thumbnail-item img {
+                height: 100px;
+            }
+
+            .gallery-nav {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-wrapper {
+                gap: 8px;
+            }
+            
+            .thumbnail-item {
+                width: 140px;
+            }
+            
+            .thumbnail-item img {
+                height: 90px;
+            }
+            
+            #mainContent {
+                padding: 20px 15px;
+                margin: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Modal de verificación de edad -->
+    <div id="overlay">
+        <div id="ageModal">
+            <h2>🔞 ¿Eres mayor de 18 años?</h2>
+            <div class="input-group">
+                <label for="userName">Tu nombre:</label>
+                <input type="text" id="userName" placeholder="Ej. Ana López" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label for="userAge">Tu edad:</label>
+                <input type="number" id="userAge" min="1" max="120" placeholder="Ej. 25">
+            </div>
+            <button id="verifyBtn">Verificar y entrar</button>
+        </div>
+    </div>
 
-  <div class="alert-container">
-    <h2>¡Nueva Versión Disponible! 🍅</h2>
-    <p>La versión <strong>Tomate Hub 1.1</strong> ya está lista. ¡Actualízate ahora para disfrutar de nuevas funciones y mejoras!</p>
-    <a href="https://www.mediafire.com/file/7180nvsham9t6io/Tomate_Hub_1.1.apk/file" class="download-btn" target="_blank" rel="noopener noreferrer">
-      Descargar Ahora
-    </a>
-  </div>
+    <!-- Contenido principal (solo visible tras verificación) -->
+    <div id="mainContent">
+        <div class="welcome-message">
+            ¡Bienvenido/a, <span id="displayName">amigo/a</span>!
+        </div>
+        
+        <div class="video-container">
+            <h1>Pruevas Gratis</h1>
 
+            <div class="current-video-info">
+                Reproduciendo: <span id="currentVideoName">Video 1: Pechugas</span>
+            </div>
+
+            <div style="position: relative;">
+                <video
+                    id="myVideoPlayer"
+                    controls
+                    width="100%"
+                    poster="poster1.jpg">
+                    <source src="video1.mp4" type="video/mp4">
+                    Tu navegador no soporta la etiqueta de video.
+                </video>
+                <div class="video-overlay">
+                    <div class="play-icon">▶</div>
+                </div>
+            </div>
+
+            <h2>Selecciona otro video:</h2>
+            <div class="gallery-container">
+                <button class="gallery-nav prev">❮</button>
+                <button class="gallery-nav next">❯</button>
+                
+                <div class="gallery-wrapper">
+                    <div class="thumbnail-item active" data-src="video1.mp4" data-name="Video 1: Pechugas" data-poster="poster1.jpg">
+                        <div class="thumbnail-badge">GRATIS</div>
+                        <img src="poster1.jpg" alt="Gratis">
+                        <p>Pechugas</p>
+                        <div class="video-stats">
+                            <div class="stat-item">⏱️ 0:06</div>
+                            <div class="stat-item">👁️ 1.2K</div>
+                        </div>
+                    </div>
+
+                    <div class="thumbnail-item" data-src="video2.mp4" data-name="Video 2: Gemelas" data-poster="poster2.jpg">
+                        <div class="thumbnail-badge">GRATIS</div>
+                        <img src="poster2.jpg" alt="Gratis">
+                        <p>Gemelas</p>
+                        <div class="video-stats">
+                            <div class="stat-item">⏱️ 0:14</div>
+                            <div class="stat-item">👁️ 2.1K</div>
+                        </div>
+                    </div>
+
+                    <div class="thumbnail-item" data-src="video3.mp4" data-name="Video 3: Chupete" data-poster="poster3.jpg">
+                        <div class="thumbnail-badge">GRATIS</div>
+                        <img src="poster3.jpg" alt="Gratis">
+                        <p>Chupete</p>
+                        <div class="video-stats">
+                            <div class="stat-item">⏱️ 0:22</div>
+                            <div class="stat-item">👁️ 1.8K</div>
+                        </div>
+                    </div>
+
+                    <div class="thumbnail-item" data-src="video4.mp4" data-name="Video 4: Movidas" data-poster="poster4.jpg">
+                        <div class="thumbnail-badge">GRATIS</div>
+                        <img src="poster4.jpg" alt="Gratis">
+                        <p>Movidas</p>
+                        <div class="video-stats">
+                            <div class="stat-item">⏱️ 0:03</div>
+                            <div class="stat-item">👁️ 3.5K</div>
+                        </div>
+                    </div>
+
+                    <div class="thumbnail-item" data-src="video5.mp4" data-name="Video 5: Especial" data-poster="poster5.jpg">
+                        <div class="thumbnail-badge">NUEVO</div>
+                        <img src="poster5.jpg" alt="Gratis">
+                        <p>Especial</p>
+                        <div class="video-stats">
+                            <div class="stat-item">⏱️ 0:00</div>
+                            <div class="stat-item">👁️ 5.2K</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-wrapper">
+                <button id="actionButton">Ver el Contenido Completo (Pago)</button>
+            </div>
+
+            <p class="note">Producto de paga para ti gratis</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elementos del modal de verificación
+            const overlay = document.getElementById('overlay');
+            const modal = document.getElementById('ageModal');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const userNameInput = document.getElementById('userName');
+            const userAgeInput = document.getElementById('userAge');
+            const displayName = document.getElementById('displayName');
+            const mainContent = document.getElementById('mainContent');
+
+            // Elementos de la galería de videos
+            const videoPlayer = document.getElementById('myVideoPlayer');
+            const sourceElement = videoPlayer.querySelector('source');
+            const currentVideoNameDisplay = document.getElementById('currentVideoName');
+            const thumbnails = document.querySelectorAll('.thumbnail-item');
+            const actionButton = document.getElementById('actionButton');
+            const prevButton = document.querySelector('.gallery-nav.prev');
+            const nextButton = document.querySelector('.gallery-nav.next');
+            const galleryWrapper = document.querySelector('.gallery-wrapper');
+
+            // Función para verificar la edad
+            verifyBtn.addEventListener('click', () => {
+                const nombre = userNameInput.value.trim();
+                const edad = parseInt(userAgeInput.value);
+
+                // Validaciones
+                if (!nombre) {
+                    alert("Por favor, ingresa tu nombre.");
+                    return;
+                }
+                if (isNaN(edad) || edad < 1 || edad > 120) {
+                    modal.classList.add('shake');
+                    setTimeout(() => modal.classList.remove('shake'), 500);
+                    alert("Por favor, ingresa una edad válida (1-120).");
+                    return;
+                }
+
+                // Menor de edad
+                if (edad < 18) {
+                    modal.innerHTML = `
+                        <h2 style="color:#e74c3c;">🚫 Acceso denegado</h2>
+                        <p style="margin-top:20px;">Lo sentimos, este sitio es solo para mayores de 18 años.</p>
+                    `;
+                    setTimeout(() => {
+                        window.location.href = "https://www.google.com";
+                    }, 2500);
+                    return;
+                }
+
+                // Mayor de edad: mostrar contenido
+                displayName.textContent = nombre;
+                overlay.style.display = 'none';
+                mainContent.style.display = 'block';
+                
+                // Añadir animación de entrada al contenido principal
+                mainContent.style.animation = 'fadeIn 0.8s ease-out, popIn 0.5s ease-out';
+            });
+
+            // Función para actualizar el nombre del video en la interfaz
+            function updateVideoNameDisplay(name) {
+                currentVideoNameDisplay.textContent = name;
+            }
+
+            // Función principal para cargar un nuevo video
+            function loadNewVideo(src, name, poster) {
+                // Mostrar indicador de carga
+                videoPlayer.classList.add('video-loading');
+                
+                // Pausar el video actual
+                videoPlayer.pause();
+
+                // Actualizar la fuente del video y el póster
+                sourceElement.src = src;
+                videoPlayer.poster = poster;
+                
+                // Cargar el reproductor
+                videoPlayer.load();
+
+                // Actualizar el nombre en la interfaz
+                updateVideoNameDisplay(name);
+
+                // Quitar el indicador de carga cuando el video esté listo
+                videoPlayer.addEventListener('canplay', function onCanPlay() {
+                    videoPlayer.classList.remove('video-loading');
+                    videoPlayer.removeEventListener('canplay', onCanPlay);
+                });
+
+                // Opcional: Iniciar la reproducción automáticamente (puede ser bloqueado por el navegador)
+                // videoPlayer.play().catch(error => {
+                //     console.warn("Auto-play bloqueado.", error);
+                // });
+            }
+
+            // Agregar un "escuchador de eventos" a cada miniatura
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', () => {
+                    // Obtener datos del video del atributo 'data-'
+                    const selectedVideoSrc = thumbnail.dataset.src;
+                    const selectedVideoName = thumbnail.dataset.name;
+                    const selectedVideoPoster = thumbnail.dataset.poster;
+
+                    // Cargar el video
+                    loadNewVideo(selectedVideoSrc, selectedVideoName, selectedVideoPoster);
+
+                    // Manejar el estado 'active' para indicar la selección
+                    // Remover la clase 'active' de todos
+                    thumbnails.forEach(t => t.classList.remove('active'));
+
+                    // Agregar la clase 'active' al ítem clickeado
+                    thumbnail.classList.add('active');
+                });
+            });
+            
+            // Añadir evento al botón "Ver el Contenido Completo"
+            if (actionButton) {
+                actionButton.addEventListener('click', () => {
+                    // Añadir efecto de pulsación antes de redirigir
+                    actionButton.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        // Redirige al sitio web especificado
+                        window.location.href = 'https://henrychansanchez21-glitch.github.io/LOGINNUEVO/';
+                    }, 300);
+                });
+            }
+
+            // Navegación de la galería
+            if (prevButton && nextButton) {
+                prevButton.addEventListener('click', () => {
+                    galleryWrapper.scrollBy({
+                        left: -220,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                nextButton.addEventListener('click', () => {
+                    galleryWrapper.scrollBy({
+                        left: 220,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            // Efecto de hover en el reproductor de video
+            videoPlayer.addEventListener('mouseenter', () => {
+                videoPlayer.style.transform = 'scale(1.02)';
+            });
+            
+            videoPlayer.addEventListener('mouseleave', () => {
+                videoPlayer.style.transform = 'scale(1)';
+            });
+
+            // Inicialización: Asegurar que el nombre y el estado 'active' sean correctos al cargar
+            updateVideoNameDisplay(document.querySelector('.thumbnail-item.active').dataset.name);
+        });
+    </script>
 </body>
 </html>
